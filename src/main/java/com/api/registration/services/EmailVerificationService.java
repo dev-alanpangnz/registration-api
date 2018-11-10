@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class EmailVerificationService {
-    public boolean authenticate(UserAccount userAccount) {
+    public boolean authenticateUserEmail(UserAccount userAccount) {
         return userAccount.getEmailVerified().equals("true");
     }
 }

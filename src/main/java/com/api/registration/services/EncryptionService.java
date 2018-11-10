@@ -1,12 +1,11 @@
 package com.api.registration.services;
 
-import com.api.registration.config.exceptions.UserNotVerifiedException;
 import com.api.registration.domain.UserAccount;
 import com.api.registration.repository.UserAccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.Base64Utils;
 
+import java.util.Base64;
 import java.util.Random;
 
 /**
@@ -39,8 +38,8 @@ public class EncryptionService {
     }
 
     private String hashPassword(String password, String salt) {
-        // Byte Strings galore, for now lets password+salt
-        return password+salt;
+        byte[] encodedPassword = Base64.getEncoder().encode(password.getBytes());
+        return new String(encodedPassword)+salt;
     }
 
     private String createAndReturnRandomPasswordSalt() {
