@@ -40,9 +40,8 @@ public class RegistrationController {
     @RequestMapping(value = "/account/create", method = RequestMethod.POST)
     ResponseEntity<UserAccount> registerNewUser(@RequestBody UserAccount userAccount) {
 
-        // Todo: Should Handle saving data to repository here instead of service
-
-        UserAccount newUser = encryptionService.registerUserIntoDatabase(userAccount);
+        UserAccount newUser = encryptionService.hashAndSetUserAccountPassword(userAccount);
+        userAccountRepository.save(newUser);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()

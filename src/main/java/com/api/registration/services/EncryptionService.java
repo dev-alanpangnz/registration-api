@@ -18,19 +18,9 @@ import java.util.Random;
 @Service
 public class EncryptionService {
 
-    private UserAccountRepository userAccountRepository;
-
-    @Autowired
-    public EncryptionService(UserAccountRepository userAccountRepository) {
-        this.userAccountRepository = userAccountRepository;
-    }
-
-    public UserAccount registerUserIntoDatabase(UserAccount userAccount) {
-        // Todo: Refactor method so that it doesn't save userdata in service class
+    public UserAccount hashAndSetUserAccountPassword(UserAccount userAccount) {
         createAndSetUserPassword(userAccount);
-        UserAccount newUser = userAccountRepository.save(userAccount);
-        userAccountRepository.save(userAccount);
-        return newUser;
+        return userAccount;
     }
 
     private void createAndSetUserPassword(UserAccount input) {

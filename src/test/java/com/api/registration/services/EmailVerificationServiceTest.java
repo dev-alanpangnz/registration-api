@@ -8,8 +8,8 @@ public class EmailVerificationServiceTest {
 
     private EmailVerificationService emailVerificationService = new EmailVerificationService();
 
-    UserAccount verifiedEmail = new UserAccount();
-    UserAccount unverifiedEmail = new UserAccount();
+    private UserAccount verifiedEmail = new UserAccount();
+    private UserAccount unverifiedEmail = new UserAccount();
 
     @Test
     public void testForVerifiedEmail() throws Exception {
