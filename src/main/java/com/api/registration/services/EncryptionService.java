@@ -27,14 +27,8 @@ public class EncryptionService {
     }
 
     public UserAccount registerUserIntoDatabase(UserAccount userAccount) {
-        UserAccount newUser;
-        if (userAccount.getEmailVerified().equals("true")) {
-            createAndSetUserPassword(userAccount);
-            newUser = userAccountRepository.save(userAccount);
-        } else {
-            throw new UserNotVerifiedException(userAccount.getEmail());
-        }
-
+        createAndSetUserPassword(userAccount);
+        UserAccount newUser = userAccountRepository.save(userAccount);
         userAccountRepository.save(userAccount);
         return newUser;
     }

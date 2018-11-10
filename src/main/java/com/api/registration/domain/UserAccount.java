@@ -16,6 +16,7 @@ public class UserAccount implements Serializable {
     private String emailVerified;
     private String password;
     private String passwordSalt;
+    private String session;
 
     public UserAccount() {
         // Empty constructor for Hibernate
@@ -74,5 +75,14 @@ public class UserAccount implements Serializable {
 
     public void setPasswordSalt(String passwordSalt) {
         this.passwordSalt = passwordSalt;
+    }
+
+    @Column(name = "session_active")
+    public String getSession() {
+        return session;
+    }
+
+    public void setSession(String session) {
+        this.session = session;
     }
 }
