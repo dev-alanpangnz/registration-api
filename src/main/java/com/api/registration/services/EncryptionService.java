@@ -26,6 +26,7 @@ public class EncryptionService {
     }
 
     public UserAccount registerUserIntoDatabase(UserAccount userAccount) {
+        // Todo: Refactor method so that it doesn't save userdata in service class
         createAndSetUserPassword(userAccount);
         UserAccount newUser = userAccountRepository.save(userAccount);
         userAccountRepository.save(userAccount);

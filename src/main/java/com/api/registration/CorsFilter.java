@@ -9,6 +9,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/**
+ * @author Alan Pang
+ * The purpose of this class is to allow a local developer to test a locally
+ * running API with a locally running Frontend on chrome, This allows a user
+ * to bypass having correct Cors headers for the frontend.
+ */
+
 @Component
 public class CorsFilter extends OncePerRequestFilter{
     @Override
