@@ -5,5 +5,6 @@ CREATE TABLE user_account (
   email_verified VARCHAR(10),
   password VARCHAR(60) NOT NULL,
   password_salt VARCHAR(10) NOT NULL,
-  session_active VARCHAR(10)
+  session_active VARCHAR(10),
+  verification_code VARCHAR(10)
 );

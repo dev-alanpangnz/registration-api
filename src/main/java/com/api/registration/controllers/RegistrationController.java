@@ -5,6 +5,7 @@ import com.api.registration.config.exceptions.UserNotFoundException;
 import com.api.registration.config.exceptions.UserNotVerifiedException;
 import com.api.registration.domain.UserAccount;
 import com.api.registration.repository.UserAccountRepository;
+import com.api.registration.services.EmailSenderService;
 import com.api.registration.services.EmailVerificationService;
 import com.api.registration.services.EncryptionService;
 import com.api.registration.services.LoginAuthenticationService;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.Random;
 
 @RestController
 public class RegistrationController {
@@ -24,23 +26,27 @@ public class RegistrationController {
     private final EncryptionService encryptionService;
     private final EmailVerificationService emailVerificationService;
     private final LoginAuthenticationService loginAuthenticationService;
+    private final EmailSenderService emailSenderService;
 
     @Autowired
     public RegistrationController(
             UserAccountRepository userAccountRepository,
             EncryptionService encryptionService,
             EmailVerificationService emailVerificationService,
-            LoginAuthenticationService loginAuthenticationService) {
+            LoginAuthenticationService loginAuthenticationService,
+            EmailSenderService emailSenderService) {
         this.userAccountRepository = userAccountRepository;
         this.encryptionService = encryptionService;
         this.emailVerificationService = emailVerificationService;
         this.loginAuthenticationService = loginAuthenticationService;
+        this.emailSenderService = emailSenderService;
     }
 
     @RequestMapping(value = "/account/create", method = RequestMethod.POST)
     ResponseEntity<UserAccount> registerNewUser(@RequestBody UserAccount userAccount) {
-
         UserAccount newUser = encryptionService.hashAndSetUserAccountPassword(userAccount);
+        newUser.setVerificationCode(generateVerificationCode());
+        emailSenderService.sendMail(newUser.getEmail(), newUser.getVerificationCode());
         userAccountRepository.save(newUser);
 
         URI location = ServletUriComponentsBuilder
@@ -83,6 +89,19 @@ public class RegistrationController {
         }
     }
 
+    @RequestMapping(value = "/account/verify", method = RequestMethod.PUT)
+    ResponseEntity<UserAccount> verifyUserEmail(@RequestBody UserAccount userAccount) {
+        UserAccount currentUserData = getUser(userAccount.getUserName());
+
+        if (userAccount.getVerificationCode().equals(currentUserData.getVerificationCode())) {
+            currentUserData.setEmailVerified("true");
+            userAccountRepository.save(currentUserData);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+    }
+
     /**
      * Helper Method retrieving existing user, and throwing not found errors if no user is found
      * @param username the username of the User Account
@@ -94,6 +113,14 @@ public class RegistrationController {
             throw new UserNotFoundException(username);
         }
         return userAccount;
+    }
+
+    private String generateVerificationCode() {
+        return Integer
+                .toString(new Random()
+                        .ints(1000,9999)
+                        .findFirst()
+                        .getAsInt());
     }
 }
 

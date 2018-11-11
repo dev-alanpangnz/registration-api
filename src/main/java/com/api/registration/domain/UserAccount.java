@@ -17,6 +17,7 @@ public class UserAccount implements Serializable {
     private String password;
     private String passwordSalt;
     private String session;
+    private String verificationCode;
 
     public UserAccount() {
         // Empty constructor for Hibernate
@@ -84,5 +85,14 @@ public class UserAccount implements Serializable {
 
     public void setSession(String session) {
         this.session = session;
+    }
+
+    @Column(name = "verification_code")
+    public String getVerificationCode() {
+        return verificationCode;
+    }
+
+    public void setVerificationCode(String verificationCode) {
+        this.verificationCode = verificationCode;
     }
 }

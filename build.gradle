@@ -29,6 +29,9 @@ dependencies {
 	implementation('org.springframework.boot:spring-boot-starter-data-rest')
 	implementation('org.springframework.boot:spring-boot-starter-web')
 //	implementation('org.flywaydb:flyway-core')
+	compile group: 'javax', name: 'javaee-api', version: '7.0'
+	compile group: 'javax.mail', name: 'mail', version: '1.4.1'
+
 	runtimeOnly('org.postgresql:postgresql')
 	testImplementation('org.springframework.boot:spring-boot-starter-test')
 	compile "org.flywaydb:flyway-core:5.2.1"
