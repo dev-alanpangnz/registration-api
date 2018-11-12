@@ -36,7 +36,7 @@ public class EncryptionService {
     private String createAndReturnRandomPasswordSalt() {
         return Integer
                 .toString(new Random()
-                        .ints(0,100)
+                        .ints(1000,9999)
                         .findFirst()
                         .getAsInt());
     }

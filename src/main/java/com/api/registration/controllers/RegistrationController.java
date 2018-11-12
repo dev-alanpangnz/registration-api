@@ -42,6 +42,11 @@ public class RegistrationController {
         this.emailSenderService = emailSenderService;
     }
 
+    @GetMapping("/account/{username}")
+    UserAccount getUserByName(@PathVariable String username) {
+        return getUser(username);
+    }
+
     @RequestMapping(value = "/account/create", method = RequestMethod.POST)
     ResponseEntity<UserAccount> createNewUserAndSendVerificationEmail(@RequestBody UserAccount userAccount) {
         UserAccount newUser = encryptionService.hashAndSetUserAccountPassword(userAccount);
@@ -115,11 +120,8 @@ public class RegistrationController {
      * @return User Object
      */
     private UserAccount getUser(String username) {
-        UserAccount userAccount = userAccountRepository.findByUserName(username);
-        if (userAccount == null) {
-            throw new UserNotFoundException(username);
-        }
-        return userAccount;
+        return userAccountRepository.findByUserName(username)
+                .orElseThrow(() -> new UserNotFoundException(username));
     }
 
     /**
