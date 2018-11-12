@@ -2,8 +2,7 @@ package com.api.registration.services;
 
 import com.api.registration.domain.UserAccount;
 import org.springframework.stereotype.Service;
-
-import java.util.Base64;
+import org.springframework.util.DigestUtils;
 
 @Service
 public class LoginAuthenticationService {
@@ -12,8 +11,9 @@ public class LoginAuthenticationService {
     }
 
     private boolean passwordCheck(UserAccount incomingAccount, UserAccount registeredAccount) {
-        byte[] encodedPassword = Base64.getEncoder().encode(incomingAccount.getPassword().getBytes());
-        String incomingPassword = new String(encodedPassword) + registeredAccount.getPasswordSalt();
+        byte[] passwordByte = incomingAccount.getPassword().getBytes();
+        String md5Hex = new String(DigestUtils.md5Digest(passwordByte)).toUpperCase();
+        String incomingPassword = md5Hex + registeredAccount.getPasswordSalt();
         return incomingPassword.equals(registeredAccount.getPassword());
     }
 }

@@ -1,18 +1,17 @@
 package com.api.registration.services;
 
 import com.api.registration.domain.UserAccount;
-import com.api.registration.repository.UserAccountRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.DigestUtils;
 
-import java.util.Base64;
 import java.util.Random;
 
 /**
  *  @author Alan Pang
  *  The purpose of this class is to implement a simple password hash
  *  For simplicity reasons, I decided not to use the Spring Security.
- *  Instead we're going to do a simple _ (Not recommended) + _
+ *  Instead we're going to do a simple MD5digest (Not recommended) +
+ *  4 random digits
  */
 
 @Service
@@ -29,8 +28,9 @@ public class EncryptionService {
     }
 
     private String hashPassword(String password, String salt) {
-        byte[] encodedPassword = Base64.getEncoder().encode(password.getBytes());
-        return new String(encodedPassword)+salt;
+        byte[] passwordByte = password.getBytes();
+        String md5Hex = new String(DigestUtils.md5Digest(passwordByte)).toUpperCase();
+        return md5Hex+salt;
     }
 
     private String createAndReturnRandomPasswordSalt() {

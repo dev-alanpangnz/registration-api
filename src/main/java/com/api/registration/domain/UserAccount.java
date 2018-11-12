@@ -24,7 +24,7 @@ public class UserAccount implements Serializable {
     }
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     public long getUserId() {
         return userId;
     }
@@ -33,7 +33,7 @@ public class UserAccount implements Serializable {
         this.userId = userId;
     }
 
-    @Column(name = "username")
+    @Column(name = "username", unique = true)
     public String getUserName() {
         return userName;
     }

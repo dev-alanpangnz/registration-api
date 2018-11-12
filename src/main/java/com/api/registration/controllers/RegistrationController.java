@@ -1,5 +1,6 @@
 package com.api.registration.controllers;
 
+import com.api.registration.config.exceptions.EmailNotFoundException;
 import com.api.registration.config.exceptions.UserNotAuthenticatedException;
 import com.api.registration.config.exceptions.UserNotFoundException;
 import com.api.registration.config.exceptions.UserNotVerifiedException;
@@ -43,8 +44,11 @@ public class RegistrationController {
     }
 
     @GetMapping("/account/{username}")
-    UserAccount getUserByName(@PathVariable String username) {
-        return getUser(username);
+    ResponseEntity<UserAccount> checkIfUserExists(@PathVariable String username) {
+        if (getUser(username) != null) {
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @RequestMapping(value = "/account/create", method = RequestMethod.POST)
@@ -53,7 +57,11 @@ public class RegistrationController {
         newUser.setVerificationCode(generateVerificationCode());
         userAccountRepository.save(newUser);
         // Commented out because TLS does not work with company firewall
-        // emailSenderService.sendMail(newUser.getEmail(), newUser.getVerificationCode());
+        if (newUser.getEmail() != null) {
+            emailSenderService.sendMail(newUser.getEmail(), newUser.getVerificationCode());
+        } else {
+            throw new EmailNotFoundException();
+        }
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
