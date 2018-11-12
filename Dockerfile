@@ -1,4 +1,4 @@
-FROM openjdk:alpine
+FROM gradle:4.2.1-jdk8-alpine
 
 ADD build/libs/*.jar /opt/registration.jar
 

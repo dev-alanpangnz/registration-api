@@ -52,7 +52,8 @@ public class RegistrationController {
         UserAccount newUser = encryptionService.hashAndSetUserAccountPassword(userAccount);
         newUser.setVerificationCode(generateVerificationCode());
         userAccountRepository.save(newUser);
-        emailSenderService.sendMail(newUser.getEmail(), newUser.getVerificationCode());
+        // Commented out because TLS does not work with company firewall
+        // emailSenderService.sendMail(newUser.getEmail(), newUser.getVerificationCode());
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
