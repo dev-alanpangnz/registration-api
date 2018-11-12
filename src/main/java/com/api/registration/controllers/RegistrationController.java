@@ -1,9 +1,6 @@
 package com.api.registration.controllers;
 
-import com.api.registration.config.exceptions.EmailNotFoundException;
-import com.api.registration.config.exceptions.UserNotAuthenticatedException;
-import com.api.registration.config.exceptions.UserNotFoundException;
-import com.api.registration.config.exceptions.UserNotVerifiedException;
+import com.api.registration.config.exceptions.*;
 import com.api.registration.domain.UserAccount;
 import com.api.registration.repository.UserAccountRepository;
 import com.api.registration.services.EmailSenderService;
@@ -43,25 +40,14 @@ public class RegistrationController {
         this.emailSenderService = emailSenderService;
     }
 
-    @GetMapping("/account/{username}")
-    ResponseEntity<UserAccount> checkIfUserExists(@PathVariable String username) {
-        if (getUser(username) != null) {
-            return new ResponseEntity<>(HttpStatus.CONFLICT);
-        }
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
     @RequestMapping(value = "/account/create", method = RequestMethod.POST)
     ResponseEntity<UserAccount> createNewUserAndSendVerificationEmail(@RequestBody UserAccount userAccount) {
+        checkIfUsernameAlreadyExists(userAccount);
         UserAccount newUser = encryptionService.hashAndSetUserAccountPassword(userAccount);
         newUser.setVerificationCode(generateVerificationCode());
         userAccountRepository.save(newUser);
-        // Commented out because TLS does not work with company firewall
-        if (newUser.getEmail() != null) {
-            emailSenderService.sendMail(newUser.getEmail(), newUser.getVerificationCode());
-        } else {
-            throw new EmailNotFoundException();
-        }
+
+        checkIfEmailIsEmptyBeforeSendingVerificationCode(newUser);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
@@ -143,6 +129,20 @@ public class RegistrationController {
                         .ints(1000,9999)
                         .findFirst()
                         .getAsInt());
+    }
+
+    private void checkIfEmailIsEmptyBeforeSendingVerificationCode(UserAccount newUser) {
+        if (newUser.getEmail() != null) {
+            emailSenderService.sendMail(newUser.getEmail(), newUser.getVerificationCode());
+        } else {
+            throw new EmailNotFoundException();
+        }
+    }
+
+    private void checkIfUsernameAlreadyExists(@RequestBody UserAccount userAccount) {
+        if (getUser(userAccount.getUserName()) != null) {
+            throw new UserAlreadyExistsException(userAccount.getUserName());
+        }
     }
 }
 
