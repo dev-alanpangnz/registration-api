@@ -1,7 +1,5 @@
 package com.api.registration.services;
 
-import com.api.registration.domain.UserAccount;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Properties;

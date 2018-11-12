@@ -43,11 +43,11 @@ public class RegistrationController {
     }
 
     @RequestMapping(value = "/account/create", method = RequestMethod.POST)
-    ResponseEntity<UserAccount> registerNewUser(@RequestBody UserAccount userAccount) {
+    ResponseEntity<UserAccount> createNewUserAndSendVerificationEmail(@RequestBody UserAccount userAccount) {
         UserAccount newUser = encryptionService.hashAndSetUserAccountPassword(userAccount);
         newUser.setVerificationCode(generateVerificationCode());
-        emailSenderService.sendMail(newUser.getEmail(), newUser.getVerificationCode());
         userAccountRepository.save(newUser);
+        emailSenderService.sendMail(newUser.getEmail(), newUser.getVerificationCode());
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
@@ -73,24 +73,31 @@ public class RegistrationController {
         }
     }
 
-    @RequestMapping(value = "/account/update", method = RequestMethod.PUT)
-    ResponseEntity<UserAccount> updateUserEmailAndPassword(@RequestBody UserAccount userAccount)
+    @RequestMapping(value = "/account/update/email", method = RequestMethod.PUT)
+    ResponseEntity<UserAccount> updateUserEmail(@RequestBody UserAccount userAccount)
             throws NotFoundException {
 
         UserAccount currentUserData = getUser(userAccount.getUserName());
 
-        if (!userAccount.getSession().equals("true")) {
-            throw new UserNotAuthenticatedException(userAccount.getUserName());
-        } else {
-            currentUserData.setEmail(userAccount.getEmail());
-            currentUserData.setPassword(userAccount.getPassword());
-            userAccountRepository.save(currentUserData);
-            return new ResponseEntity<>(HttpStatus.OK);
-        }
+        currentUserData.setEmail(userAccount.getEmail());
+        userAccountRepository.save(currentUserData);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/account/update/password", method = RequestMethod.PUT)
+    ResponseEntity<UserAccount> updateUserPassword(@RequestBody UserAccount userAccount)
+            throws NotFoundException {
+
+        UserAccount currentUserData = getUser(userAccount.getUserName());
+        encryptionService.hashAndSetUserAccountPassword(userAccount);
+        currentUserData.setPassword(userAccount.getPassword());
+        currentUserData.setPasswordSalt(userAccount.getPasswordSalt());
+        userAccountRepository.save(currentUserData);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @RequestMapping(value = "/account/verify", method = RequestMethod.PUT)
-    ResponseEntity<UserAccount> verifyUserEmail(@RequestBody UserAccount userAccount) {
+    ResponseEntity<UserAccount> verifyUserEmailOnSignUp(@RequestBody UserAccount userAccount) {
         UserAccount currentUserData = getUser(userAccount.getUserName());
 
         if (userAccount.getVerificationCode().equals(currentUserData.getVerificationCode())) {
@@ -103,7 +110,7 @@ public class RegistrationController {
     }
 
     /**
-     * Helper Method retrieving existing user, and throwing not found errors if no user is found
+     * Helper Method for retrieving existing user, and throwing not found errors if no user is found
      * @param username the username of the User Account
      * @return User Object
      */
@@ -115,6 +122,10 @@ public class RegistrationController {
         return userAccount;
     }
 
+    /**
+     * Helper method for generating a verification code whenever a user tries to sign up
+     * @return String code to put in the email
+     */
     private String generateVerificationCode() {
         return Integer
                 .toString(new Random()
