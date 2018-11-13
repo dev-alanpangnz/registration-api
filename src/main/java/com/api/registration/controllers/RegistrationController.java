@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.ConnectException;
 import java.net.URI;
 import java.util.Random;
 
@@ -42,7 +43,11 @@ public class RegistrationController {
 
     @RequestMapping(value = "/account/create", method = RequestMethod.POST)
     ResponseEntity<UserAccount> createNewUserAndSendVerificationEmail(@RequestBody UserAccount userAccount) {
-        checkIfUsernameAlreadyExists(userAccount);
+
+        if (userAccountRepository.findDistinctByUserName(userAccount.getUserName()) != null) {
+            throw new UserAlreadyExistsException(userAccount.getUserName());
+        }
+
         UserAccount newUser = encryptionService.hashAndSetUserAccountPassword(userAccount);
         newUser.setVerificationCode(generateVerificationCode());
         userAccountRepository.save(newUser);
@@ -136,12 +141,6 @@ public class RegistrationController {
             emailSenderService.sendMail(newUser.getEmail(), newUser.getVerificationCode());
         } else {
             throw new EmailNotFoundException();
-        }
-    }
-
-    private void checkIfUsernameAlreadyExists(@RequestBody UserAccount userAccount) {
-        if (getUser(userAccount.getUserName()) != null) {
-            throw new UserAlreadyExistsException(userAccount.getUserName());
         }
     }
 }

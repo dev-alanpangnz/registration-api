@@ -1,5 +1,6 @@
 package com.api.registration.services;
 
+import com.api.registration.config.exceptions.EmailSenderServiceBlockedException;
 import org.springframework.stereotype.Service;
 
 import java.util.Properties;
@@ -44,7 +45,7 @@ public class EmailSenderService {
             Transport.send(message);
 
         } catch (MessagingException e) {
-            throw new RuntimeException(e);
+            throw new EmailSenderServiceBlockedException();
         }
     }
 }
