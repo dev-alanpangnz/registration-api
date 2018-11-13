@@ -50,7 +50,7 @@ public class UserAccountController {
      * @param userAccount the payload containing: Username, Email, Password and EmailVerified: false
      * @return ResponseEntity
      */
-    @RequestMapping(value = "/account/create", method = RequestMethod.POST)
+    @RequestMapping(value = "/account", method = RequestMethod.POST)
     ResponseEntity<UserAccount> createNewUserAndSendVerificationEmail(@RequestBody UserAccount userAccount) {
 
         // Handle Existing Users: Resend verification to unactivated users or throw error
@@ -144,7 +144,7 @@ public class UserAccountController {
      * @param userAccount containing username and email
      * @return
      */
-    @RequestMapping(value = "/account/update/email", method = RequestMethod.PUT)
+    @RequestMapping(value = "/account/email", method = RequestMethod.PUT)
     ResponseEntity<UserAccount> updateUserEmail(@RequestBody UserAccount userAccount) {
 
         UserAccount currentUserData = getUser(userAccount.getUserName());
@@ -160,7 +160,7 @@ public class UserAccountController {
      * @param userAccount payload containing username and password
      * @return ResponseEntity
      */
-    @RequestMapping(value = "/account/update/password", method = RequestMethod.PUT)
+    @RequestMapping(value = "/account/password", method = RequestMethod.PUT)
     ResponseEntity<UserAccount> updateUserPassword(@RequestBody UserAccount userAccount) {
 
         UserAccount currentUserData = getUser(userAccount.getUserName());
