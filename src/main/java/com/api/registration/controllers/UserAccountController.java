@@ -18,7 +18,7 @@ import java.net.URI;
 import java.util.Random;
 
 @RestController
-public class RegistrationController {
+public class UserAccountController {
 
     private final UserAccountRepository userAccountRepository;
     private final EncryptionService encryptionService;
@@ -27,7 +27,7 @@ public class RegistrationController {
     private final EmailSenderService emailSenderService;
 
     @Autowired
-    public RegistrationController(
+    public UserAccountController(
             UserAccountRepository userAccountRepository,
             EncryptionService encryptionService,
             EmailVerificationService emailVerificationService,
