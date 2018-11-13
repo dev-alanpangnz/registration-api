@@ -53,7 +53,15 @@ public class UserAccountController {
     @RequestMapping(value = "/account/create", method = RequestMethod.POST)
     ResponseEntity<UserAccount> createNewUserAndSendVerificationEmail(@RequestBody UserAccount userAccount) {
 
-        if (userAccountRepository.findDistinctByUserName(userAccount.getUserName()) != null) {
+        // Handle Existing Users: Resend verification to unactivated users or throw error
+        if (userAccountRepository.findDistinctByUserName(userAccount.getUserName()) != null
+                && userAccountRepository.findDistinctByUserName(userAccount.getUserName()).getEmailVerified().equals("false")) {
+            UserAccount unactivatedUser = userAccountRepository.findDistinctByUserName(userAccount.getUserName());
+            unactivatedUser.setVerificationCode(generateVerificationCode());
+            userAccountRepository.save(unactivatedUser);
+            emailSenderService.sendMail(unactivatedUser.getEmail(), unactivatedUser.getVerificationCode());
+            return new ResponseEntity<>(HttpStatus.OK);
+        } else if (userAccountRepository.findDistinctByUserName(userAccount.getUserName()) != null) {
             throw new UserAlreadyExistsException(userAccount.getUserName());
         }
 
@@ -70,6 +78,21 @@ public class UserAccountController {
                 .toUri();
 
         return ResponseEntity.created(location).build();
+    }
+
+    /**
+     * Re-sends an email with a newly generated verification code. This allows the user to get
+     * another code if their email was lost or if they did not receive their email.
+     * @param userAccount username to be used to get the unactivated user.
+     * @return OK
+     */
+    @RequestMapping(value = "/account/verify", method = RequestMethod.POST)
+    ResponseEntity<UserAccount> resendEmailWithVerificationCode(@RequestBody UserAccount userAccount) {
+        UserAccount currentUserData = getUser(userAccount.getUserName());
+        currentUserData.setVerificationCode(generateVerificationCode());
+        userAccountRepository.save(currentUserData);
+        checkIfEmailIsEmptyBeforeSendingVerificationCode(currentUserData);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     /**

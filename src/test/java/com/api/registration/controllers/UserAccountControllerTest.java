@@ -60,7 +60,18 @@ public class UserAccountControllerTest {
     }
 
     @Test
-    public void b_TestCreatingUnverifiedUser() throws Exception {
+    public void b_TestCreatingAccountWithExistingUser() throws Exception {
+        user1 = userAccountRepository.findDistinctByUserName("usable");
+        this.mockMvc.perform(post("/account/create")
+                .content(mapper.writeValueAsString(user1))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isConflict());
+    }
+
+    @Test
+    public void c_TestCreatingUnverifiedUser() throws Exception {
         user2.setUserName("John");
         user2.setPassword("Smith");
         user2.setEmail("test@user.com");
@@ -75,18 +86,18 @@ public class UserAccountControllerTest {
     }
 
     @Test
-    public void c_TestCreatingAccountWithExistingUser() throws Exception {
+    public void d_TestResendingEmailToUnverifiedUser() throws Exception {
         user2 = userAccountRepository.findDistinctByUserName("John");
         this.mockMvc.perform(post("/account/create")
                 .content(mapper.writeValueAsString(user2))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
-                .andExpect(status().isConflict());
+                .andExpect(status().isOk());
     }
 
     @Test
-    public void d_TestVerifyingUserEmailViaToken() throws Exception {
+    public void e_TestVerifyingUserEmailViaToken() throws Exception {
         user2 = userAccountRepository.findDistinctByUserName("John");
         user2.setPassword("Smith");
         user2.setVerificationCode(user2.getVerificationCode());
@@ -100,7 +111,7 @@ public class UserAccountControllerTest {
     }
 
     @Test
-    public void e_TestForLoginWithWrongPassword() throws Exception {
+    public void f_TestForLoginWithWrongPassword() throws Exception {
         user2.setPassword("password");
         this.mockMvc.perform(put("/account/login")
                 .content(mapper.writeValueAsString(user2))
@@ -111,7 +122,7 @@ public class UserAccountControllerTest {
     }
 
     @Test
-    public void f_TestUpdateUserEmail() throws Exception {
+    public void g_TestUpdateUserEmail() throws Exception {
         user2 = userAccountRepository.findDistinctByUserName("John");
         user2.setEmail("test@user2.com");
         this.mockMvc.perform(put("/account/update/email")
@@ -123,7 +134,7 @@ public class UserAccountControllerTest {
     }
 
     @Test
-    public void g_TestUpdateUserPassword() throws Exception {
+    public void h_TestUpdateUserPassword() throws Exception {
         user2 = userAccountRepository.findDistinctByUserName("John");
         user2.setPassword("12345");
         this.mockMvc.perform(put("/account/update/password")
@@ -135,7 +146,7 @@ public class UserAccountControllerTest {
     }
 
     @Test
-    public void h_clearOutDatabase() throws Exception {
+    public void i_clearOutDatabase() throws Exception {
         userAccountRepository.deleteAll();
     }
 }
