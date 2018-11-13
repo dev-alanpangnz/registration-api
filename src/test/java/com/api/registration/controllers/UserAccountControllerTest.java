@@ -18,6 +18,14 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+/**
+ * This class performs tests against the integration between the API and Database.
+ * Note: Must have a connected datasource in order for these tests to run properly.
+ * Probably a bad idea but I wanted to test a chain of api calls on the same resource
+ * therefore I didn't create a @after method for this class.
+ *
+ * @author Alan Pang
+ */
 @RunWith(SpringRunner.class)
 @AutoConfigureMockMvc
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -67,7 +75,7 @@ public class UserAccountControllerTest {
     }
 
     @Test
-    public void c_testCreatingAccountWithExistingUser() throws Exception {
+    public void c_TestCreatingAccountWithExistingUser() throws Exception {
         user2 = userAccountRepository.findDistinctByUserName("John");
         this.mockMvc.perform(post("/account/create")
                 .content(mapper.writeValueAsString(user2))
@@ -78,7 +86,7 @@ public class UserAccountControllerTest {
     }
 
     @Test
-    public void d_testVerifyingUserEmailViaToken() throws Exception {
+    public void d_TestVerifyingUserEmailViaToken() throws Exception {
         user2 = userAccountRepository.findDistinctByUserName("John");
         user2.setPassword("Smith");
         user2.setVerificationCode(user2.getVerificationCode());
@@ -92,7 +100,7 @@ public class UserAccountControllerTest {
     }
 
     @Test
-    public void e_testForLoginWithWrongPassword() throws Exception {
+    public void e_TestForLoginWithWrongPassword() throws Exception {
         user2.setPassword("password");
         this.mockMvc.perform(put("/account/login")
                 .content(mapper.writeValueAsString(user2))
@@ -103,7 +111,7 @@ public class UserAccountControllerTest {
     }
 
     @Test
-    public void f_testUpdateUserEmail() throws Exception {
+    public void f_TestUpdateUserEmail() throws Exception {
         user2 = userAccountRepository.findDistinctByUserName("John");
         user2.setEmail("test@user2.com");
         this.mockMvc.perform(put("/account/update/email")
@@ -115,7 +123,7 @@ public class UserAccountControllerTest {
     }
 
     @Test
-    public void g_testUpdateUserPassword() throws Exception {
+    public void g_TestUpdateUserPassword() throws Exception {
         user2 = userAccountRepository.findDistinctByUserName("John");
         user2.setPassword("12345");
         this.mockMvc.perform(put("/account/update/password")
@@ -124,6 +132,11 @@ public class UserAccountControllerTest {
                 .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    public void h_clearOutDatabase() throws Exception {
+        userAccountRepository.deleteAll();
     }
 }
 

@@ -4,6 +4,12 @@ import com.api.registration.domain.UserAccount;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 
+/**
+ * This class is to test the MD5 one way encryption used to store passwords into
+ * the database.
+ *
+ * @author Alan Pang
+ */
 public class EncryptionServiceTest {
 
     private EncryptionService encryptionService = new EncryptionService();

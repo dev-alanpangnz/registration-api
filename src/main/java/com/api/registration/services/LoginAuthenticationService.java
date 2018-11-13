@@ -4,6 +4,13 @@ import com.api.registration.domain.UserAccount;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
+/**
+ * The purpose of this class is to authenticate users using the same logic that was
+ * used in the Encryption Service.
+ *
+ * @author Alan Pang
+ */
+
 @Service
 public class LoginAuthenticationService {
     public boolean authenticateUserCredentials(UserAccount accountLoggingIn, UserAccount registeredAccount) {

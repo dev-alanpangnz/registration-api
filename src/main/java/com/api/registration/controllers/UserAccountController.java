@@ -7,7 +7,6 @@ import com.api.registration.services.EmailSenderService;
 import com.api.registration.services.EmailVerificationService;
 import com.api.registration.services.EncryptionService;
 import com.api.registration.services.LoginAuthenticationService;
-import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +16,12 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 import java.util.Random;
 
+/**
+ * Bespoke REST controller for registering a user and logging in. This controller contains
+ * endpoint which will be used from the frontend.
+ *
+ * @author Alan Pang
+ */
 @RestController
 public class UserAccountController {
 
@@ -41,9 +46,9 @@ public class UserAccountController {
     }
 
     /**
-     * Creates a new Unvalidated user for the database
-     * @param userAccount
-     * @return
+     * This method registers a new user with the EmailVerified field of false
+     * @param userAccount the payload containing: Username, Email, Password and EmailVerified: false
+     * @return ResponseEntity
      */
     @RequestMapping(value = "/account/create", method = RequestMethod.POST)
     ResponseEntity<UserAccount> createNewUserAndSendVerificationEmail(@RequestBody UserAccount userAccount) {
@@ -68,11 +73,12 @@ public class UserAccountController {
     }
 
     /**
-     * A secondary API call after calling the unverified creation method. This method checks if the code in the server
-     * sent to the user has been correctly received and entered from the client side. If it has, then the User account
-     * has been verified.
-     * @param userAccount
-     * @return
+     * A secondary API call after calling the unverified creation method.
+     * This method checks if the code in the server sent to the user has been correctly received
+     * and entered from the client side. If it has, then the User account has been verified and is
+     * allowed to log in.
+     * @param userAccount Payload containing username and verification code from the frontend
+     * @return ResponseEntity
      */
     @RequestMapping(value = "/account/verify", method = RequestMethod.PUT)
     ResponseEntity<UserAccount> verifyUserEmailOnSignUp(@RequestBody UserAccount userAccount) {
@@ -88,9 +94,11 @@ public class UserAccountController {
     }
 
     /**
-     * Allows the client to log in by authenticating their credentials
-     * @param userAccount
-     * @return
+     * Allows the client to log in by authenticating their credentials.
+     * This method checks whether the User is allowed to log in by peeking at emailVerified.
+     * If true, method proceeds to authenticate user credentials.
+     * @param userAccount containing username and password
+     * @return ResponseEntity
      */
     @RequestMapping(value = "/account/login", method = RequestMethod.POST)
     ResponseEntity<UserAccount> authenticateUser(@RequestBody UserAccount userAccount) {
@@ -108,14 +116,13 @@ public class UserAccountController {
     }
 
     /**
-     * Allows the client to make changes to their Emails
-     * @param userAccount
+     * Allows the client to make changes to their Emails. Simple call, this endpoint is called
+     * after the user has logged in and wants to make a change to their email.
+     * @param userAccount containing username and email
      * @return
-     * @throws NotFoundException
      */
     @RequestMapping(value = "/account/update/email", method = RequestMethod.PUT)
-    ResponseEntity<UserAccount> updateUserEmail(@RequestBody UserAccount userAccount)
-            throws NotFoundException {
+    ResponseEntity<UserAccount> updateUserEmail(@RequestBody UserAccount userAccount) {
 
         UserAccount currentUserData = getUser(userAccount.getUserName());
 
@@ -125,14 +132,13 @@ public class UserAccountController {
     }
 
     /**
-     * Allows the client to make changes to their passwords
-     * @param userAccount
-     * @return
-     * @throws NotFoundException
+     * Allows the client to make changes to their passwords, same format as above but with
+     * password.
+     * @param userAccount payload containing username and password
+     * @return ResponseEntity
      */
     @RequestMapping(value = "/account/update/password", method = RequestMethod.PUT)
-    ResponseEntity<UserAccount> updateUserPassword(@RequestBody UserAccount userAccount)
-            throws NotFoundException {
+    ResponseEntity<UserAccount> updateUserPassword(@RequestBody UserAccount userAccount) {
 
         UserAccount currentUserData = getUser(userAccount.getUserName());
         encryptionService.hashAndSetUserAccountPassword(userAccount);
@@ -143,9 +149,9 @@ public class UserAccountController {
     }
 
     /**
-     * Helper Method for retrieving existing user, and throwing not found errors if no user is found
+     * Helper Method for retrieving existing user, and throwing not found exception if no user is found
      * @param username the username of the User Account
-     * @return User Object
+     * @return UserAccount Object of the specified user.
      */
     private UserAccount getUser(String username) {
         return userAccountRepository.findByUserName(username)

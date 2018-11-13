@@ -12,6 +12,11 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+/**
+ * A service for sending verification emails to registering users.
+ * Beware: This service does not sent emails over SSL, and is using the TLS port
+ */
+
 @Service
 public class EmailSenderService {
 

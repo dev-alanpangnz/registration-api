@@ -5,6 +5,12 @@ import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import org.springframework.util.DigestUtils;
 
+/**
+ * The purpose of this class is to test the login logic used to authenticate Users when they
+ * are trying to log in.
+ *
+ * @author ALan Pang
+ */
 public class LoginAuthenticationServiceTest {
 
     private LoginAuthenticationService loginAuthenticationService = new LoginAuthenticationService();

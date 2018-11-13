@@ -12,6 +12,11 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Optional;
 
+/**
+ * This class is aimed at just testing the data access.
+ *
+ * @author Alan Pang
+ */
 @RunWith(SpringRunner.class)
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)

@@ -7,11 +7,11 @@ import org.springframework.util.DigestUtils;
 import java.util.Random;
 
 /**
+ *  The purpose of this class is to implement a simple password hash.
+ *  For simplicity reasons, I decided to use the java MD5 digest, which is not
+ *  recommended in normal circumstances. The hash is 4 digits generated at random.
+ *
  *  @author Alan Pang
- *  The purpose of this class is to implement a simple password hash
- *  For simplicity reasons, I decided not to use the Spring Security.
- *  Instead we're going to do a simple MD5digest (Not recommended) +
- *  4 random digits
  */
 
 @Service

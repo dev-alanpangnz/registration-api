@@ -4,6 +4,11 @@ import com.api.registration.domain.UserAccount;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 
+/**
+ * This class is aimed at testing the verification check used to verify emails.
+ *
+ * @author Alan Pang
+ */
 public class EmailVerificationServiceTest {
 
     private EmailVerificationService emailVerificationService = new EmailVerificationService();
