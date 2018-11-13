@@ -2,6 +2,7 @@ package com.api.registration.repository;
 
 import com.api.registration.domain.UserAccount;
 import org.assertj.core.api.Assertions;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,7 @@ import java.util.Optional;
  */
 @RunWith(SpringRunner.class)
 @DataJpaTest
+@Ignore
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class UserAccountRepositoryTest {
 
