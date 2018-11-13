@@ -15,6 +15,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+/**
+ * Not in working state as of yet
+ */
 @RunWith(SpringRunner.class)
 @WebMvcTest(RegistrationController.class)
 public class RegistrationControllerTest {

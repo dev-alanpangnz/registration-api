@@ -40,6 +40,11 @@ public class RegistrationController {
         this.emailSenderService = emailSenderService;
     }
 
+    /**
+     * Creates a new Unvalidated user for the database
+     * @param userAccount
+     * @return
+     */
     @RequestMapping(value = "/account/create", method = RequestMethod.POST)
     ResponseEntity<UserAccount> createNewUserAndSendVerificationEmail(@RequestBody UserAccount userAccount) {
 
@@ -62,6 +67,31 @@ public class RegistrationController {
         return ResponseEntity.created(location).build();
     }
 
+    /**
+     * A secondary API call after calling the unverified creation method. This method checks if the code in the server
+     * sent to the user has been correctly received and entered from the client side. If it has, then the User account
+     * has been verified.
+     * @param userAccount
+     * @return
+     */
+    @RequestMapping(value = "/account/verify", method = RequestMethod.PUT)
+    ResponseEntity<UserAccount> verifyUserEmailOnSignUp(@RequestBody UserAccount userAccount) {
+        UserAccount currentUserData = getUser(userAccount.getUserName());
+
+        if (userAccount.getVerificationCode().equals(currentUserData.getVerificationCode())) {
+            currentUserData.setEmailVerified("true");
+            userAccountRepository.save(currentUserData);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+    }
+
+    /**
+     * Allows the client to log in by authenticating their credentials
+     * @param userAccount
+     * @return
+     */
     @RequestMapping(value = "/account/login", method = RequestMethod.POST)
     ResponseEntity<UserAccount> authenticateUser(@RequestBody UserAccount userAccount) {
         if (emailVerificationService.authenticateUserEmail(getUser(userAccount.getUserName()))) {
@@ -77,6 +107,12 @@ public class RegistrationController {
         }
     }
 
+    /**
+     * Allows the client to make changes to their Emails
+     * @param userAccount
+     * @return
+     * @throws NotFoundException
+     */
     @RequestMapping(value = "/account/update/email", method = RequestMethod.PUT)
     ResponseEntity<UserAccount> updateUserEmail(@RequestBody UserAccount userAccount)
             throws NotFoundException {
@@ -88,6 +124,12 @@ public class RegistrationController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    /**
+     * Allows the client to make changes to their passwords
+     * @param userAccount
+     * @return
+     * @throws NotFoundException
+     */
     @RequestMapping(value = "/account/update/password", method = RequestMethod.PUT)
     ResponseEntity<UserAccount> updateUserPassword(@RequestBody UserAccount userAccount)
             throws NotFoundException {
@@ -98,19 +140,6 @@ public class RegistrationController {
         currentUserData.setPasswordSalt(userAccount.getPasswordSalt());
         userAccountRepository.save(currentUserData);
         return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    @RequestMapping(value = "/account/verify", method = RequestMethod.PUT)
-    ResponseEntity<UserAccount> verifyUserEmailOnSignUp(@RequestBody UserAccount userAccount) {
-        UserAccount currentUserData = getUser(userAccount.getUserName());
-
-        if (userAccount.getVerificationCode().equals(currentUserData.getVerificationCode())) {
-            currentUserData.setEmailVerified("true");
-            userAccountRepository.save(currentUserData);
-            return new ResponseEntity<>(HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
     }
 
     /**
