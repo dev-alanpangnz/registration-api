@@ -33,7 +33,7 @@ public class UserAccount implements Serializable {
         this.userId = userId;
     }
 
-    @Column(name = "username", unique = true)
+    @Column(name = "username", unique = true, length = 255)
     public String getUserName() {
         return userName;
     }
@@ -42,7 +42,7 @@ public class UserAccount implements Serializable {
         this.userName = userName;
     }
 
-    @Column(name = "email")
+    @Column(name = "email", length = 255)
     public String getEmail() {
         return email;
     }
@@ -60,7 +60,7 @@ public class UserAccount implements Serializable {
         this.emailVerified = emailVerified;
     }
 
-    @Column(name = "password")
+    @Column(name = "password", length = 255)
     public String getPassword() {
         return password;
     }
