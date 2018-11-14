@@ -126,7 +126,7 @@ public class UserAccountControllerTest {
     public void g_TestUpdateUserEmail() throws Exception {
         user2 = userAccountRepository.findDistinctByUserName("John");
         user2.setEmail("test@user2.com");
-        this.mockMvc.perform(put("/account/email")
+        this.mockMvc.perform(put("/account")
                 .content(mapper.writeValueAsString(user2))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
@@ -138,7 +138,7 @@ public class UserAccountControllerTest {
     public void h_TestUpdateUserPassword() throws Exception {
         user2 = userAccountRepository.findDistinctByUserName("John");
         user2.setPassword("12345");
-        this.mockMvc.perform(put("/account/password")
+        this.mockMvc.perform(put("/account")
                 .content(mapper.writeValueAsString(user2))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))

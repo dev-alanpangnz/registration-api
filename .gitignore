@@ -26,3 +26,4 @@
 /.nb-gradle/
 /registration.iml
 /.idea/
+/src/main/resources/application.properties

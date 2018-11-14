@@ -139,6 +139,31 @@ public class UserAccountController {
     }
 
     /**
+     * Updates user account (Merging email and password)
+     * Better practice instead of naming uri with specific name
+     * @param userAccount containing username and email or password
+     * @return
+     */
+    @RequestMapping(value = "/account", method = RequestMethod.PUT)
+    ResponseEntity<UserAccount> userUserProfile(@RequestBody UserAccount userAccount) {
+
+        UserAccount currentUserData = getUser(userAccount.getUserName());
+
+        if (userAccount.getEmail() != null) {
+            currentUserData.setEmail(userAccount.getEmail());
+        }
+
+        if (userAccount.getPassword() != null) {
+            encryptionService.hashAndSetUserAccountPassword(userAccount);
+            currentUserData.setPassword(userAccount.getPassword());
+            currentUserData.setPasswordSalt(userAccount.getPasswordSalt());
+        }
+
+        userAccountRepository.save(currentUserData);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    /**
      * Allows the client to make changes to their Emails. Simple call, this endpoint is called
      * after the user has logged in and wants to make a change to their email.
      * @param userAccount containing username and email
