@@ -1,9 +1,14 @@
 # Registration API
-Springboot application that uses Hibernate and JPA + Postgres.
+SpringBoot application that uses Hibernate and JPA + Postgres.
 
-In order to run this project in the IDE, User must have a running postgres datasource exposed on the default port 5432. This project has integration tests that are dependent on a datasource and Emails not being blocked by a firewall. 
+- In order to run this project in the IDE, User must have a running postgres datasource exposed on localhost with the default port 5432. 
+- The database used by default for docker compose is called `postgres`, so make sure you match your db name to the value in application properties. 
+- This project has integration tests that are dependent on a datasource.
+- The workflow for registration only works if Emails not being blocked by a firewall. 
 
-Best case is to hotspot off your phone if you're at work. 
+**Best case is to hotspot off your phone if you're at work.** 
+
+Most Classes in this project have JavaDocs
 
 ####Dockerfile
 - Docker file uses a gradle base image
