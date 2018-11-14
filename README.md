@@ -18,3 +18,12 @@ Best case is to hotspot off your phone if you're at work.
 After starting docker-compose, you can now start the frontend (Note that the frontend project needs to be build via `ng build --prod`) before running the docker image.
 The frontend queries localhost:8080 (The api) so if you were to substitute the ip for something else make sure you reflect that in the FE codebase `post-data-to-api.service`.
 
+####Endpoints
+- POST /account: Creates an unverified user
+- POST /account/verify: Re-sends email verification code
+- PUT /account/verify: Updates the User email verification flag after they send the correct verification code
+- POST /account/login: Authenticates Registered User (Must have verified email)
+- PUT /account/email: Allows User to change email
+- PUT /account/password: Allows user to change password
+
+ 
