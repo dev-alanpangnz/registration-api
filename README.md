@@ -28,8 +28,7 @@ The frontend queries localhost:8080 (The api) so if you were to substitute the i
 - POST /account/verify: Re-sends email verification code
 - PUT /account/verify: Updates the User email verification flag after they send the correct verification code
 - POST /account/login: Authenticates Registered User (Must have verified email)
-- PUT /account/email: Allows User to change email
-- PUT /account/password: Allows user to change password
+- PUT /account: Update user email or password (new)
 
 ####Some Extra Notes (I put some thought into this):
 - I would of liked to handle the email verification on the frontend using another micro service so that I only 

@@ -164,39 +164,6 @@ public class UserAccountController {
     }
 
     /**
-     * Allows the client to make changes to their Emails. Simple call, this endpoint is called
-     * after the user has logged in and wants to make a change to their email.
-     * @param userAccount containing username and email
-     * @return
-     */
-    @RequestMapping(value = "/account/email", method = RequestMethod.PUT)
-    ResponseEntity<UserAccount> updateUserEmail(@RequestBody UserAccount userAccount) {
-
-        UserAccount currentUserData = getUser(userAccount.getUserName());
-
-        currentUserData.setEmail(userAccount.getEmail());
-        userAccountRepository.save(currentUserData);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    /**
-     * Allows the client to make changes to their passwords, same format as above but with
-     * password.
-     * @param userAccount payload containing username and password
-     * @return ResponseEntity
-     */
-    @RequestMapping(value = "/account/password", method = RequestMethod.PUT)
-    ResponseEntity<UserAccount> updateUserPassword(@RequestBody UserAccount userAccount) {
-
-        UserAccount currentUserData = getUser(userAccount.getUserName());
-        encryptionService.hashAndSetUserAccountPassword(userAccount);
-        currentUserData.setPassword(userAccount.getPassword());
-        currentUserData.setPasswordSalt(userAccount.getPasswordSalt());
-        userAccountRepository.save(currentUserData);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    /**
      * Helper Method for retrieving existing user, and throwing not found exception if no user is found
      * @param username the username of the User Account
      * @return UserAccount Object of the specified user.
